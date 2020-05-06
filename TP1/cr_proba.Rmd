@@ -57,14 +57,10 @@ Frequency <- function(x, nb)
   totalN <- 0
   
   for (i in x){
-    bin <- binary(i)
+    bin <- rev(binary(i))
+    totalN <- totalN + nb
     
-    # for (n in 1:nb) seems to make X1 = -1 every time
-    # causing the result to be inaccurate. Using instead
-    # for (n in 2:nb) seems to prevent this issue.
-    for (n in 2:nb) {
-      totalN <- totalN + 1
-      
+    for (n in 1:nb) {
       if (bin[n] == 1) s <- s+1
       else             s <- s-1
     }
@@ -75,7 +71,9 @@ Frequency <- function(x, nb)
   
   return(Pvaleur)
 }
+```
 
+```{r, echo=TRUE}
 # Generating a vector of 100 random numbers in [0,10000]
 seeds <- sample.int(10000, 100)
 
@@ -83,27 +81,41 @@ seeds <- sample.int(10000, 100)
 # get the average P value for each.
 RANDUavgPvalue <- 0
 for(i in 1:length(seeds)) {
-  RANDUavgPvalue <- RANDUavgPvalue + Frequency(randu(1000, seeds[i]), 32)
+  # La plage des valeurs de randu: {0, ..., 2^31-1}
+  # 2^31-1 s'écrit sur 31 bits
+  RANDUavgPvalue <- RANDUavgPvalue + Frequency(randu(1000, seeds[i]), 31)
 }
 RANDUavgPvalue <- RANDUavgPvalue / 100
 
 SMavgPvalue <- 0
 for(i in 1:length(seeds)) {
-  SMavgPvalue <- SMavgPvalue + Frequency(StandardMinimal(1000, seeds[i]), 32)
+  # La plage des valeurs de Standard Minimal: {0, ..., 2^31-2}
+  # 2^31-1 s'écrit sur 31 bits
+  SMavgPvalue <- SMavgPvalue + Frequency(StandardMinimal(1000, seeds[i]), 31)
 }
 SMavgPvalue <- SMavgPvalue / 100
 
 MTavgPvalue <- 0
 for(i in 1:length(seeds)) {
+  # La plage des valeurs de Mersenne-Twister: {0, ..., 2^32-1}
+  # 2^32-1 s'écrit sur 32 bits
   MTavgPvalue <- MTavgPvalue + Frequency(MersenneTwister(1000, 1, seeds[i]), 32)
 }
 MTavgPvalue <- MTavgPvalue / 100
 
+VNavgPvalue <- 0
+for(i in 1:length(seeds)) {
+  # La plage des valeurs de Von Neumann: {0, ..., 9999}
+  # 9999 s'écrit sur 14 bits
+  VNavgPvalue <- VNavgPvalue + Frequency(VonNeumann(1000, 1, seeds[i]), 14)
+}
+VNavgPvalue <- VNavgPvalue / 100
 ```
 
-Algorithm     | Avg. P value
-------------- | -------------
-RANDU   | `r RANDUavgPvalue`
+Algorithm        | Avg. P value
+---------------- | ----------------
+RANDU            | `r RANDUavgPvalue`
 Standard Minimal | `r SMavgPvalue`
-Mersenne Twister | `r MTavgPvalue`
+Mersenne-Twister | `r MTavgPvalue`
+Von Neumann      | `r VNavgPvalue`
 
