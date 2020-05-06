@@ -67,6 +67,9 @@ Frequency <- function(x, nb)
   
   for (i in x){
     bin <- binary(i)
+    # for (n in 1:nb) seems to make X1 = -1 every time
+    # causing the result to be inaccurate. Using instead
+    # for (n in 2:nb) seems to prevent this issue.
     for (n in 2:nb) {
       totalN <- totalN + 1
       
@@ -81,8 +84,11 @@ Frequency <- function(x, nb)
   return(Pvaleur)
 }
 
+# Generating a vector of 100 random numbers in [0,10000]
 seeds <- sample.int(10000, 100)
 
+# Try some of our algorithms on each of the 100 seeds,
+# get the average P value for each.
 RANDUavgPvalue <- Frequency(randu(1000, seeds[1]), 32)
 for(i in 2:length(seeds)) {
   RANDUavgPvalue <- RANDUavgPvalue + Frequency(randu(1000, seeds[i]), 32)
