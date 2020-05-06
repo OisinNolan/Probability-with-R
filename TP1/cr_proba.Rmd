@@ -9,7 +9,8 @@ output: html_document
 
 source("generateurs.R")
 
-graine <- 46382
+graine <- 9274629
+set.seed(graine)
 ```
 
 ## Question 2.1
@@ -22,7 +23,7 @@ RANDU <- randu(k=k, graine=graine)
 Von_Neumann <- VonNeumann(n=k, graine=graine)
 Mersenne_Twister <- MersenneTwister(n=k, graine=graine)
 
-#par(mfrow=c(1,2)) 
+par(mfrow=c(2,2)) 
 hist(Standard_Minimal)
 hist(RANDU)
 hist(Von_Neumann)
@@ -33,6 +34,7 @@ hist(Mersenne_Twister)
 
 ```{r, echo=TRUE}
 
+par(mfrow=c(2,2)) 
 plot(Standard_Minimal[1:(k-1)], Standard_Minimal[2:k])
 plot(RANDU[1:(k-1)], RANDU[2:k])
 plot(Von_Neumann[1:(k-1)], Von_Neumann[2:k])
@@ -42,23 +44,12 @@ plot(Mersenne_Twister[1:(k-1)], Mersenne_Twister[2:k])
 
 
 Il n'y a pas de modèle apparent qui relit les valeurs $S_{n-1}$ et $S_n$.
-as expented seems to be random
+Comme prévu, les valeurs semble d'être générées d'une façon aléatoire.
 
 
 ## Question 3
 
 ```{r, echo=FALSE}
-
-z <- sample.int(99999,100)
-
-len <- function(vect)
-{
-  for (i in vect){
-    if(i == 1) return(i)
-  }
-  return(length(vect))
-}
-
 
 Frequency <- function(x, nb)
 {
@@ -67,6 +58,7 @@ Frequency <- function(x, nb)
   
   for (i in x){
     bin <- binary(i)
+    
     # for (n in 1:nb) seems to make X1 = -1 every time
     # causing the result to be inaccurate. Using instead
     # for (n in 2:nb) seems to prevent this issue.
@@ -89,20 +81,20 @@ seeds <- sample.int(10000, 100)
 
 # Try some of our algorithms on each of the 100 seeds,
 # get the average P value for each.
-RANDUavgPvalue <- Frequency(randu(1000, seeds[1]), 32)
-for(i in 2:length(seeds)) {
+RANDUavgPvalue <- 0
+for(i in 1:length(seeds)) {
   RANDUavgPvalue <- RANDUavgPvalue + Frequency(randu(1000, seeds[i]), 32)
 }
 RANDUavgPvalue <- RANDUavgPvalue / 100
 
-SMavgPvalue <- Frequency(randu(1000, seeds[1]), 32)
-for(i in 2:length(seeds)) {
+SMavgPvalue <- 0
+for(i in 1:length(seeds)) {
   SMavgPvalue <- SMavgPvalue + Frequency(StandardMinimal(1000, seeds[i]), 32)
 }
 SMavgPvalue <- SMavgPvalue / 100
 
-MTavgPvalue <- Frequency(MersenneTwister(1000, 1, seeds[1]), 32)
-for(i in 2:length(seeds)) {
+MTavgPvalue <- 0
+for(i in 1:length(seeds)) {
   MTavgPvalue <- MTavgPvalue + Frequency(MersenneTwister(1000, 1, seeds[i]), 32)
 }
 MTavgPvalue <- MTavgPvalue / 100
