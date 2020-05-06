@@ -23,6 +23,35 @@ MersenneTwister <- function(n, p=1, graine)
 }
 
 
+# Question 1
+congruenceLineaire <- function(a, b, m, k, graine)
+{
+  v <- c()
+  v[1] <- (a * graine + b) %% m 
+  
+  for (i in 2:k){
+    v[i] <-  (a * v[i-1] + b) %% m  
+  }
+  
+  return(v)
+}
+
+StandardMinimal <- function(k, graine)
+{
+  return(
+    congruenceLineaire(a=16807, b=0, m=2^31-1, k=k, graine=graine)
+  )
+}
+
+randu <- function(k, graine)
+{
+  return(
+    congruenceLineaire(a=65539, b=0, m=2^31, k=k, graine=graine)
+  )
+}
+
+# Question 3
+
 binary <- function(x)
 {
   if((x<2^31)&(x>=0))

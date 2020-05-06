@@ -1,0 +1,85 @@
+---
+title: "TP Probabilités"
+author: "Piotr Frątczak"
+date: "6 05 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+source("generateurs.R")
+
+graine <- 46382
+```
+
+## Question 2.1
+
+```{r, echo=TRUE}
+k <- 1000
+
+Standard_Minimal <- StandardMinimal(k=k, graine=graine)
+RANDU <- randu(k=k, graine=graine)
+Von_Neumann <- VonNeumann(n=k, graine=graine)
+Mersenne_Twister <- MersenneTwister(n=k, graine=graine)
+
+#par(mfrow=c(1,2)) 
+hist(Standard_Minimal)
+hist(RANDU)
+hist(Von_Neumann)
+hist(Mersenne_Twister)
+```
+
+## Question 2.2
+
+```{r, echo=TRUE}
+
+plot(Standard_Minimal[1:(k-1)], Standard_Minimal[2:k])
+plot(RANDU[1:(k-1)], RANDU[2:k])
+plot(Von_Neumann[1:(k-1)], Von_Neumann[2:k])
+plot(Mersenne_Twister[1:(k-1)], Mersenne_Twister[2:k])
+
+```
+
+
+Il n'y a pas de modèle apparent qui relit les valeurs $S_{n-1}$ et $S_n$.
+as expented seems to be random
+
+
+## Question 3
+
+```{r, echo=FALSE}
+
+z <- sample.int(99999,100)
+
+len <- function(vect)
+{
+  for (i in vect){
+    if(i == 1) return(i)
+  }
+  return(length(vect))
+}
+
+
+Frequency <- function(x, nb)
+{
+  s <- 0
+  n <- 0
+  
+  for (i in x){
+    bin <- binary(i)
+    n <- n + nb - len(bin) +1
+    
+    for (n in len(bin):nb) {
+      if (bin[n] == 1) s <- s+1
+      else             s <- s-1
+    }
+  }
+  
+  s_obs <- abs(s) / sqrt(n)
+  Pvaleur = 2 ∗ (1 − pnorm(s_obs))
+  
+  return(Pvaleur)
+}
+
+Frequency(VonNeumann(1000, 12345), 32)
+```
