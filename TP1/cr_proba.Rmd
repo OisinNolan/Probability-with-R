@@ -63,23 +63,49 @@ len <- function(vect)
 Frequency <- function(x, nb)
 {
   s <- 0
-  n <- 0
+  totalN <- 0
   
   for (i in x){
     bin <- binary(i)
-    n <- n + nb - len(bin) +1
-    
-    for (n in len(bin):nb) {
+    for (n in 2:nb) {
+      totalN <- totalN + 1
+      
       if (bin[n] == 1) s <- s+1
       else             s <- s-1
     }
   }
   
-  s_obs <- abs(s) / sqrt(n)
-  Pvaleur = 2 ∗ (1 − pnorm(s_obs))
+  s_obs <- abs(s) / sqrt(totalN)
+  Pvaleur = 2 * (1 - pnorm(s_obs))
   
   return(Pvaleur)
 }
 
-Frequency(VonNeumann(1000, 12345), 32)
+seeds <- sample.int(10000, 100)
+
+RANDUavgPvalue <- Frequency(randu(1000, seeds[1]), 32)
+for(i in 2:length(seeds)) {
+  RANDUavgPvalue <- RANDUavgPvalue + Frequency(randu(1000, seeds[i]), 32)
+}
+RANDUavgPvalue <- RANDUavgPvalue / 100
+
+SMavgPvalue <- Frequency(randu(1000, seeds[1]), 32)
+for(i in 2:length(seeds)) {
+  SMavgPvalue <- SMavgPvalue + Frequency(StandardMinimal(1000, seeds[i]), 32)
+}
+SMavgPvalue <- SMavgPvalue / 100
+
+MTavgPvalue <- Frequency(MersenneTwister(1000, 1, seeds[1]), 32)
+for(i in 2:length(seeds)) {
+  MTavgPvalue <- MTavgPvalue + Frequency(MersenneTwister(1000, 1, seeds[i]), 32)
+}
+MTavgPvalue <- MTavgPvalue / 100
+
 ```
+
+Algorithm     | Avg. P value
+------------- | -------------
+RANDU   | `r RANDUavgPvalue`
+Standard Minimal | `r SMavgPvalue`
+Mersenne Twister | `r MTavgPvalue`
+
