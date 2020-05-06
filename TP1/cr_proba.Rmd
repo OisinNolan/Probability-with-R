@@ -9,9 +9,14 @@ output: html_document
 
 source("generateurs.R")
 
+library(randtoolbox)
+
 graine <- 9274629
 set.seed(graine)
 ```
+
+# 1 Tests de générateurs pseudo-aléatoires
+
 
 ## Question 2.1
 #### Test Visuel
@@ -114,6 +119,8 @@ for(i in 1:length(seeds)) {
 VNavgPvalue <- VNavgPvalue / 100
 ```
 
+Règle de décision à $1\%$ : Au vu du principe décrit ci-dessus, plus la Pvaleur est petite plus on peut rejeter de manière sûre le fait que le séquence est aléatoire. En pratique, si la Pvaleur calculée est inférieure à $0.01$ alors la séquence n’est pas aléatoire. Sinon, on ne peut pas conclure pour autant qu’elle l’est, mais rien n’inﬁrme cette hypothèse, au sens de ce test. Il est recommandé que chaque séquence testée fasse au minimum $100$ bits (i.e. $n ≥ 100$) aﬁn que l’application du théorème de la limite centrale ait un sens.
+
 Algorithm        | Avg. P value
 ---------------- | ----------------
 RANDU            | `r RANDUavgPvalue`
@@ -203,7 +210,62 @@ for(i in 1:length(seeds)) {
 VNavgPvalue <- VNavgPvalue / 100
 ```
 
+Règle de décision à $1\%$ : Si la Pvaleur calculée est inférieure à $0.01$, alors on peut conclure que la séquence n’est pas aléatoire.
+
 Algorithm        | Avg. P value
+---------------- | ----------------
+RANDU            | `r RANDUavgPvalue`
+Standard Minimal | `r SMavgPvalue`
+Mersenne-Twister | `r MTavgPvalue`
+Von Neumann      | `r VNavgPvalue`
+
+## Question 5
+#### Test d’ordre
+
+```{r, echo=FALSE}
+
+RANDUavgPvalue <- 0
+for(i in 1:length(seeds)) {
+  # La plage des valeurs de randu: {0, ..., 2^31-1}
+  # 2^31-1 s'écrit sur 31 bits
+  u <- randu(1000, seeds[i])
+  RANDUavgPvalue <- RANDUavgPvalue + order.test(u, d=4, echo=FALSE)$p.value
+}
+RANDUavgPvalue <- RANDUavgPvalue / 100
+
+SMavgPvalue <- 0
+for(i in 1:length(seeds)) {
+  # La plage des valeurs de Standard Minimal: {0, ..., 2^31-2}
+  # 2^31-1 s'écrit sur 31 bits
+  u <- StandardMinimal(1000, seeds[i])
+  SMavgPvalue <- SMavgPvalue + order.test(u, d=4, echo=FALSE)$p.value
+}
+SMavgPvalue <- SMavgPvalue / 100
+
+MTavgPvalue <- 0
+for(i in 1:length(seeds)) {
+  # La plage des valeurs de Mersenne-Twister: {0, ..., 2^32-1}
+  # 2^32-1 s'écrit sur 32 bits
+  u <- MersenneTwister(1000, 1, seeds[i])
+  u <- as.vector(u)
+  MTavgPvalue <- MTavgPvalue + order.test(u, d=4, echo=FALSE)$p.value
+}
+MTavgPvalue <- MTavgPvalue / 100
+
+VNavgPvalue <- 0
+for(i in 1:length(seeds)) {
+  # La plage des valeurs de Von Neumann: {0, ..., 9999}
+  # 9999 s'écrit sur 14 bits
+  u <- VonNeumann(1000, 1, seeds[i])
+  u <- as.vector(u)
+  VNavgPvalue <- VNavgPvalue + order.test(u, d=4, echo=FALSE)$p.value
+}
+VNavgPvalue <- VNavgPvalue / 100
+```
+
+Règle de décision à $1\%$ : L’hypothèse que les observations de u sont issues d’une loi uniforme (discrète ou uniforme) est rejetée si la Pvaleur est inférieure à $1\%$. 
+ 
+ Algorithm        | Avg. P value
 ---------------- | ----------------
 RANDU            | `r RANDUavgPvalue`
 Standard Minimal | `r SMavgPvalue`

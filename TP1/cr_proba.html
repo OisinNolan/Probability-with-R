@@ -369,6 +369,8 @@ summary {
 </div>
 
 
+<div id="tests-de-générateurs-pseudo-aléatoires" class="section level1">
+<h1>1 Tests de générateurs pseudo-aléatoires</h1>
 <div id="question-2.1" class="section level2">
 <h2>Question 2.1</h2>
 <div id="test-visuel" class="section level4">
@@ -405,6 +407,7 @@ plot(Mersenne_Twister[1:(k-1)], Mersenne_Twister[2:k])</code></pre>
 <h2>Question 3</h2>
 <div id="test-de-fréquence-monobit" class="section level4">
 <h4>Test de fréquence monobit</h4>
+<p>Règle de décision à <span class="math inline">\(1\%\)</span> : Au vu du principe décrit ci-dessus, plus la Pvaleur est petite plus on peut rejeter de manière sûre le fait que le séquence est aléatoire. En pratique, si la Pvaleur calculée est inférieure à <span class="math inline">\(0.01\)</span> alors la séquence n’est pas aléatoire. Sinon, on ne peut pas conclure pour autant qu’elle l’est, mais rien n’inﬁrme cette hypothèse, au sens de ce test. Dans l’exemple précédent, comme <span class="math inline">\(P_{valeur} = 0.527089\)</span>, on peut valider la séquence est aléatoire au sens de ce test. Il est recommandé que chaque séquence testée fasse au minimum <span class="math inline">\(100\)</span> bits (i.e. <span class="math inline">\(n ≥ 100\)</span>) aﬁn que l’application du théorème de la limite centrale ait un sens.</p>
 <table>
 <thead>
 <tr class="header">
@@ -437,6 +440,7 @@ plot(Mersenne_Twister[1:(k-1)], Mersenne_Twister[2:k])</code></pre>
 <h2>Question 4</h2>
 <div id="test-des-runs" class="section level4">
 <h4>Test des runs</h4>
+<p>Règle de décision à <span class="math inline">\(1\%\)</span> : Si la Pvaleur calculée est inférieure à <span class="math inline">\(0.01\)</span>, alors on peut conclure que la séquence n’est pas aléatoire. Dans l’exemple précédent avec une <span class="math inline">\(P_{valeur}\)</span> égale à <span class="math inline">\(0.1472\)</span>, on ne peut donc conclure que la séquence est de mauvaise qualité. Il est recommandé que chaque séquence testée fasse au minimum <span class="math inline">\(100\)</span> bits (i.e., <span class="math inline">\(n ≥ 100\)</span>).</p>
 <table>
 <thead>
 <tr class="header">
@@ -463,6 +467,40 @@ plot(Mersenne_Twister[1:(k-1)], Mersenne_Twister[2:k])</code></pre>
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div id="question-5" class="section level2">
+<h2>Question 5</h2>
+<div id="test-dordre" class="section level4">
+<h4>Test d’ordre</h4>
+<p>Règle de décision à <span class="math inline">\(1\%\)</span> : L’hypothèse que les observations de u sont issues d’une loi uniforme (discrète ou uniforme) est rejetée si la Pvaleur est inférieure à <span class="math inline">\(1\%\)</span>.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Algorithm</th>
+<th>Avg. P value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>RANDU</td>
+<td>0.49</td>
+</tr>
+<tr class="even">
+<td>Standard Minimal</td>
+<td>0.47</td>
+</tr>
+<tr class="odd">
+<td>Mersenne-Twister</td>
+<td>0.53</td>
+</tr>
+<tr class="even">
+<td>Von Neumann</td>
+<td>2.8910^{-38}</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 
