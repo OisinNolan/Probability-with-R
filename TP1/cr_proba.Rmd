@@ -14,6 +14,7 @@ set.seed(graine)
 ```
 
 ## Question 2.1
+#### Test Visuel
 
 ```{r, echo=TRUE}
 k <- 1000
@@ -31,7 +32,7 @@ hist(Mersenne_Twister)
 ```
 
 ## Question 2.2
-
+#### Test Visuel
 ```{r, echo=TRUE}
 
 par(mfrow=c(2,2)) 
@@ -48,6 +49,7 @@ Comme prévu, les valeurs semble d'être générées d'une façon aléatoire.
 
 
 ## Question 3
+#### Test de fréquence monobit
 
 ```{r, echo=FALSE}
 
@@ -73,7 +75,7 @@ Frequency <- function(x, nb)
 }
 ```
 
-```{r, echo=TRUE}
+```{r, echo=FALSE}
 # Generating a vector of 100 random numbers in [0,10000]
 seeds <- sample.int(10000, 100)
 
@@ -119,3 +121,91 @@ Standard Minimal | `r SMavgPvalue`
 Mersenne-Twister | `r MTavgPvalue`
 Von Neumann      | `r VNavgPvalue`
 
+
+## Question 4
+#### Test des runs
+
+```{r, echo=FALSE}
+Runs <- function(x, nb)
+{
+  # pre-test
+  uns    <- 0
+  totalN <- 0
+  
+  for(i in x)
+  {
+    totalN   <- totalN + nb
+    bin <- rev(binary(i))
+    
+    for(n in 1:nb)
+    {
+      if(bin[n] == 1) uns <- uns + 1
+    }
+  }
+  
+  
+  pi  <- uns/totalN
+  tau <- 2/sqrt(totalN)
+  
+  if(abs(pi - 0.5) >= tau) return(0.0)
+  # Vn(obs)
+  V <- 1
+  
+  for(i in x)
+  {
+    bin <- rev(binary(i))
+    
+    for(n in 1:(nb-1))
+    {
+      if(bin[n] != bin[n+1]) V <- V + 1
+    }
+  }
+  
+  pi2pi <- 2*pi*(1-pi)
+  Pvaleur <- 2*(1 - pnorm( abs(V - totalN*pi2pi) / (sqrt(totalN)*pi2pi) ))
+  
+ return(Pvaleur)
+}
+```
+
+```{r, echo=FALSE}
+
+RANDUavgPvalue <- 0
+for(i in 1:length(seeds)) {
+  # La plage des valeurs de randu: {0, ..., 2^31-1}
+  # 2^31-1 s'écrit sur 31 bits
+  RANDUavgPvalue <- RANDUavgPvalue + Runs(randu(1000, seeds[i]), 31)
+}
+RANDUavgPvalue <- RANDUavgPvalue / 100
+
+SMavgPvalue <- 0
+for(i in 1:length(seeds)) {
+  # La plage des valeurs de Standard Minimal: {0, ..., 2^31-2}
+  # 2^31-1 s'écrit sur 31 bits
+  SMavgPvalue <- SMavgPvalue + Runs(StandardMinimal(1000, seeds[i]), 31)
+}
+SMavgPvalue <- SMavgPvalue / 100
+
+MTavgPvalue <- 0
+for(i in 1:length(seeds)) {
+  # La plage des valeurs de Mersenne-Twister: {0, ..., 2^32-1}
+  # 2^32-1 s'écrit sur 32 bits
+  MTavgPvalue <- MTavgPvalue + Runs(MersenneTwister(1000, 1, seeds[i]), 32)
+}
+MTavgPvalue <- MTavgPvalue / 100
+
+VNavgPvalue <- 0
+for(i in 1:length(seeds)) {
+  # La plage des valeurs de Von Neumann: {0, ..., 9999}
+  # 9999 s'écrit sur 14 bits
+  VNavgPvalue <- VNavgPvalue + Runs(VonNeumann(1000, 1, seeds[i]), 14)
+}
+VNavgPvalue <- VNavgPvalue / 100
+```
+
+Algorithm        | Avg. P value
+---------------- | ----------------
+RANDU            | `r RANDUavgPvalue`
+Standard Minimal | `r SMavgPvalue`
+Mersenne-Twister | `r MTavgPvalue`
+Von Neumann      | `r VNavgPvalue`
