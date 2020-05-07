@@ -1,4 +1,4 @@
-VonNeumann <- function(n, p=1, graine)
+VonNeumann <- function(n, graine, p=1)
 {
   x <-  rep(graine,n*p+1)
   for(i in 2:(n*p+1))
@@ -14,7 +14,7 @@ VonNeumann <- function(n, p=1, graine)
 }
 
 
-MersenneTwister <- function(n, p=1, graine)
+MersenneTwister <- function(n, graine, p=1)
 {
   set.seed(graine,kind='Mersenne-Twister')
   x <- sample.int(2^32-1,n*p)
