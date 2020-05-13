@@ -144,20 +144,19 @@ evo15 <- evolutionFile(file15$arrivee, file15$depart)
 evo20 <- evolutionFile(file20$arrivee, file20$depart)
 
 par(mfrow=c(2,2))
-plot(evo08$T, evo08$N , type='s', xlab='Temps', ylab='Nombre de personnes dans la file', main= '8 nouveaux clients par heure')
-plot(evo14$T, evo14$N , type='s', xlab='Temps', ylab='Nombre de personnes dans la file', main='14 nouveaux clients par heure')
-plot(evo15$T, evo15$N , type='s', xlab='Temps', ylab='Nombre de personnes dans la file', main='15 nouveaux clients par heure')
-plot(evo20$T, evo20$N , type='s', xlab='Temps', ylab='Nombre de personnes dans la file', main='20 nouveaux clients par heure')
+plot(evo08$T, evo08$N , type='s', xlab='Temps [h]', ylab='Nombre de personnes dans la file', main= '8 nouveaux clients par heure')
+plot(evo14$T, evo14$N , type='s', xlab='Temps [h]', ylab='Nombre de personnes dans la file', main='14 nouveaux clients par heure')
+plot(evo15$T, evo15$N , type='s', xlab='Temps [h]', ylab='Nombre de personnes dans la file', main='15 nouveaux clients par heure')
+plot(evo20$T, evo20$N , type='s', xlab='Temps [h]', ylab='Nombre de personnes dans la file', main='20 nouveaux clients par heure')
 ```
 
-Sur la première visualisation 8 personnes viennent par heure en moyen et 15 personnes partent donc tout le monde est servi vite et la file est souvent vide. La situation à droite est similaire avec la file qui est parfois plus longue. Si le taux de personnes venantes et partentes sont les mêmes (15 personnes par heure), la file est rarement vide, mais elle est sous contrôle.
-Quand plus de gens viennent que sortent, la file est remplie et le serveur n'arrive pas à la racourcir.
+Sur la première visualisation 8 personnes viennent par heure en moyen et 15 personnes partent donc tout le monde est servi vite et la file est souvent vide. Dans la situation à droite, la longueur de la file oscile autour de la même valeur. Si le taux de personnes venantes et partentes sont les mêmes (15 personnes par heure), la file est parfois vide, parfois remplie, elle est sous contrôle. Quand plus de gens viennent que sortent, la file est remplie et le serveur n'arrive pas à la racourcir.
 
 ## Question 8
 
 ```{r, echo=TRUE}
-SM08 <- StatsMoyens(file08$arrivee, file08$depart,  8, 15)
-SM14 <- StatsMoyens(file14$arrivee, file14$depart, 14, 15)
+SM08 <- StatsMoyens(file08$arrivee, file08$depart,  8, 15, 12)
+SM14 <- StatsMoyens(file14$arrivee, file14$depart, 14, 15, 12)
 ```
 
 $\mathbb{E}(W)$         | $\mathbb{E}(N)$         | $\lambda\mathbb{E}(W)$
@@ -166,3 +165,4 @@ $\mathbb{E}(W)$         | $\mathbb{E}(N)$         | $\lambda\mathbb{E}(W)$
 `r SM14$EW`             | `r SM08$EN`             | `r 14*SM14$EW`
 
 La formule de Little est satisfaite $\mathbb{E}(N) = \lambda\mathbb{E}(W)$.
+#Ceci signiﬁe qu’en moyenne un client restant un laps de temps E(W) voit arriver derrière lui E(W)λ autres clients, avec λ fréquence d’entrée des clients. 

@@ -68,12 +68,12 @@ evolutionFile <- function(arrivee, depart)
       d <- d+1
     }
     
-    if(a == length(arrivee) || d == length(depart)){
+    if(a == length(arrivee)+1 || d == length(depart)+1){
       break
     }
   }
   
-  if(a == length(arrivee)){
+  if(a == length(arrivee)+1){
     repeat{
       if(d == length(depart)){
         break
@@ -84,7 +84,7 @@ evolutionFile <- function(arrivee, depart)
     }
   }
   
-  if(d == length(depart)){
+  if(d == length(depart)+1){
     
     repeat{
       if(a == length(arrivee)){
@@ -102,7 +102,7 @@ evolutionFile <- function(arrivee, depart)
   )
 }
 
-StatsMoyens <- function(arrivee, depart, lambda, mu)
+StatsMoyens <- function(arrivee, depart, lambda, mu, D)
 {
   # E(N)
   alpha <- lambda/mu
@@ -118,9 +118,17 @@ StatsMoyens <- function(arrivee, depart, lambda, mu)
     W <- W + depart[i] - arrivee[i]
   }
   
+  if(length(arrivee) > length(depart))
+  {
+    for(i in (length(depart)+1):length(arrivee))
+    {
+      W <- W + D - arrivee[i]
+    }
+  }
+  
   return(
     list(
-      EW=W/length(depart), EN=EN
+      EW=W/length(arrivee), EN=EN
     )
   )
 }
