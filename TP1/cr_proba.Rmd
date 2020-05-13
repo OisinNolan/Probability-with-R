@@ -1,7 +1,7 @@
 ---
 title: "TP Probabilités"
 author: "Piotr Frątczak"
-date: "6 05 2020"
+date: "06.05.2020"
 output: html_document
 ---
 
@@ -87,23 +87,23 @@ Von Neumann      | `r VNavgPvalue`
 
 ```{r, echo=FALSE}
 
-RANDUavgPvalue <- RunRunsTest(randu, 100, 31)
+RANDUruns <- RunRunsTest(randu, 100, 31)
 
-SMavgPvalue <- RunRunsTest(StandardMinimal, 100, 31)
+SMruns <- RunRunsTest(StandardMinimal, 100, 31)
 
-MTavgPvalue <- RunRunsTest(MersenneTwister, 100, 32)
+MTruns <- RunRunsTest(MersenneTwister, 100, 32)
 
-VNavgPvalue <- RunRunsTest(VonNeumann, 100, 14)
+VNruns <- RunRunsTest(VonNeumann, 100, 14)
 ```
 
 Règle de décision à $1\%$ : Si la Pvaleur calculée est inférieure à $0.01$, alors on peut conclure que la séquence n’est pas aléatoire.
 
-Algorithm        | Avg. P value
----------------- | ----------------
-RANDU            | `r RANDUavgPvalue`
-Standard Minimal | `r SMavgPvalue`
-Mersenne-Twister | `r MTavgPvalue`
-Von Neumann      | `r VNavgPvalue`
+Algorithm                | Avg. P value             | Pass Rate
+------------------------ | ------------------------ | ------------------------
+RANDU                    | `r RANDUruns$avgPvalue`  | `r RANDUruns$passRate`
+Standard Minimal         | `r SMruns$avgPvalue`     | `r SMruns$passRate`
+Mersenne-Twister         | `r MTruns$avgPvalue`     | `r MTruns$passRate`
+Von Neumann              | `r VNruns$avgPvalue`     | `r VNruns$passRate`
 
 ## Question 5
 #### Test d’ordre
@@ -127,3 +127,28 @@ RANDU            | `r RANDUavgPvalue`
 Standard Minimal | `r SMavgPvalue`
 Mersenne-Twister | `r MTavgPvalue`
 Von Neumann      | `r VNavgPvalue`
+
+
+# 3 Application aux files d’attentes
+
+## Question 7
+
+```{r, echo=TRUE}
+file8  <- FileMM1(8, 15, 12*60)
+file14 <- FileMM1(14, 15, 12*60)
+file15 <- FileMM1(15, 15, 12*60)
+file20 <- FileMM1(20, 15, 12*60)
+
+evo8  <- evolutionFile(file8$arrivee, file8$depart)
+evo14 <- evolutionFile(file14$arrivee, file14$depart)
+evo15 <- evolutionFile(file15$arrivee, file15$depart)
+evo20 <- evolutionFile(file20$arrivee, file20$depart)
+
+par(mfrow=c(2,2))
+plot(evo8$T, evo8$N , type='s')
+plot(evo14$T, evo14$N , type='s')
+plot(evo15$T, evo15$N , type='s')
+plot(evo20$T, evo20$N , type='s')
+```
+
+## Question 8
