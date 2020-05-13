@@ -82,10 +82,20 @@ RunFrequencyTest <- function(func, numTests, nb)
 {
   seeds <- sample.int(100000, numTests)
   avgPvalue <- 0
-  for(i in 1:length(seeds)) {
-    avgPvalue <- avgPvalue + Frequency(func(1000, seeds[i]), nb)
+  passCount <- 0
+  
+  for(i in 1:numTests) {
+    Pvalue <- Frequency(func(1000, seeds[i]), nb)
+    avgPvalue <- avgPvalue + Pvalue
+    if(Pvalue > 0.01){
+      passCount <- passCount +1
+    }
   }
+  
   avgPvalue <- avgPvalue / numTests
+  return(
+    list(avgPvalue=avgPvalue, passRate=passCount/numTests)
+  )
 }
 
 RunRunsTest <- function(func, numTests, nb)
@@ -99,6 +109,7 @@ RunRunsTest <- function(func, numTests, nb)
     # 2^31-1 s'écrit sur 31 bits
     Pvalue <- Runs(func(1000, seeds[i]), nb)
     avgPvalue <- avgPvalue + Pvalue
+    
     if(Pvalue > 0.01){
       passCount <- passCount +1
     }
@@ -114,132 +125,22 @@ RunOrderTest <- function(func, numTests)
 {
   seeds <- sample.int(100000, numTests)
   avgPvalue <- 0
-  for(i in 1:length(seeds)) {
+  passCount <- 0
+  
+  for(i in 1:numTests) {
     u <- func(1000, seeds[i])
     u <- as.vector(u)
-    avgPvalue <- avgPvalue + order.test(u, d=4, echo=FALSE)$p.value
+    Pvalue <- order.test(u, d=4, echo=FALSE)$p.value
+    avgPvalue <- avgPvalue + Pvalue
+    
+    if(Pvalue > 0.01){
+      passCount <- passCount +1
+    }
   }
   avgPvalue <- avgPvalue / numTests
-}
-
-FileMM1 <- function(lambda, mu, D)
-{
-  total <- 0
-  arrivee <- c()
-  
-  repeat{
-    
-    T <- rexp(1,lambda)
-    total <- total + T
-    
-    if(total > D){
-      break
-    }
-    
-    arrivee <- c(arrivee, total)
-  }
-  
-  depart <- c()
-  prevDep <- 0
-  
-  for(a in arrivee)
-  {
-    
-    T <- rexp(1,mu)
-    nouvelDepart <- a + T
-    
-    if(nouvelDepart < prevDep){
-      nouvelDepart <- prevDep + T
-    }
-    
-    if(nouvelDepart > D){
-      break
-    }
-    
-    depart <- c(depart, nouvelDepart)
-    prevDep <- nouvelDepart
-    
-  }
   
   return(
-    list(arrivee=arrivee , depart=depart)
+    list(avgPvalue=avgPvalue, passRate=passCount/numTests)
   )
 }
 
-evolutionFile <- function(arrivee, depart)
-{
-  a <- 1
-  d <- 1
-  
-  N <- c(0)
-  T <- c(0)
-  
-  repeat{
-    if(arrivee[a] < depart[d]){
-      N <- c(N, tail(N,1)+1)
-      T <- c(T, arrivee[a])
-      a <- a+1
-    } else if(arrivee[a] > depart[d]){
-      N <- c(N, tail(N,1)-1)
-      T <- c(T, depart[d])
-      d <- d+1
-    } else {
-      a <- a+1
-      d <- d+1
-    }
-    
-    if(a == length(arrivee) || d == length(depart)){
-      break
-    }
-  }
-  
-  if(a == length(arrivee)){
-    repeat{
-      if(d == length(depart)){
-        break
-      }
-      N <- c(N, tail(N,1)-1 )
-      T <- c(T, depart[d] )
-      d <- d+1
-    }
-  }
-  
-  if(d == length(depart)){
-    
-    repeat{
-      if(a == length(arrivee)){
-        break
-      }
-      
-      N <- c(N, tail(N,1)+1 )
-      T <- c(T, arrivee[a] )
-      a <- a+1
-    }
-  }
-  
-  return(
-    list(T=T, N=N)
-    )
-}
-
-StatsMoyens <- function(arrivee, depart, lambda, mu)
-{
-  
-  # E(W)
-  W <- 0
-  
-  for(i in 1:length(depart))
-  {
-    W <- W + depart[i] - arrivee[i]
-  }
-  
-  # E(N)
-  alpha <- lambda/mu
-  EN <- alpha/(1-alpha)
-  
-  return(
-    list(
-      EW=W/length(depart), EN=EN
-    )
-  )
-}

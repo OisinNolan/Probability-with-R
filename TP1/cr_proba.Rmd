@@ -8,7 +8,8 @@ output: html_document
 ```{r setup, include=FALSE}
 
 source("generateurs.R")
-source("Tests.R")
+source("tests.R")
+source("files.R")
 
 library(randtoolbox)
 
@@ -25,28 +26,30 @@ set.seed(graine)
 ```{r, echo=TRUE}
 k <- 1000
 
+RANDU            <- randu(k=k, graine=graine)
 Standard_Minimal <- StandardMinimal(k=k, graine=graine)
-RANDU <- randu(k=k, graine=graine)
-Von_Neumann <- VonNeumann(n=k, graine=graine)
 Mersenne_Twister <- MersenneTwister(n=k, graine=graine)
+Von_Neumann      <- VonNeumann(n=k, graine=graine)
+
+```
+```{r, echo=FALSE}
 
 par(mfrow=c(2,2)) 
-hist(Standard_Minimal)
-hist(RANDU)
-hist(Von_Neumann)
-hist(Mersenne_Twister)
+hist(RANDU,            xlab='Nombre généré', ylab='Fréquence', main='RANDU')
+hist(Standard_Minimal, xlab='Nombre généré', ylab='Fréquence', main='Standard Minimal')
+hist(Mersenne_Twister, xlab='Nombre généré', ylab='Fréquence', main='Mersenne-Twister')
+hist(Von_Neumann,      xlab='Nombre généré', ylab='Fréquence', main='Von Neumann')
 ```
 
 ## Question 2.2
 #### Test Visuel
-```{r, echo=TRUE}
+```{r, echo=FALSE}
 
 par(mfrow=c(2,2)) 
-plot(Standard_Minimal[1:(k-1)], Standard_Minimal[2:k])
-plot(RANDU[1:(k-1)], RANDU[2:k])
-plot(Von_Neumann[1:(k-1)], Von_Neumann[2:k])
-plot(Mersenne_Twister[1:(k-1)], Mersenne_Twister[2:k])
-
+plot(RANDU[1:(k-1)],            RANDU[2:k],            xlab='S précédent', ylab='S', main='RANDU')
+plot(Standard_Minimal[1:(k-1)], Standard_Minimal[2:k], xlab='S précédent', ylab='S', main='Standard Minimal')
+plot(Mersenne_Twister[1:(k-1)], Mersenne_Twister[2:k], xlab='S précédent', ylab='S', main='Mersenne-Twister')
+plot(Von_Neumann[1:(k-1)],      Von_Neumann[2:k],      xlab='S précédent', ylab='S', main='Von Neumann')
 ```
 
 
@@ -62,24 +65,21 @@ Comme prévu, les valeurs semble d'être générées d'une façon aléatoire.
 
 # Try some of our algorithms on each of the 100 seeds,
 # get the average P value for each.
-RANDUavgPvalue <- RunFrequencyTest(randu, 100, 31)
-
-SMavgPvalue <- RunFrequencyTest(StandardMinimal, 100, 31)
-
-MTavgPvalue <- RunFrequencyTest(MersenneTwister, 100, 32)
-
-VNavgPvalue <- RunFrequencyTest(VonNeumann, 100, 14)
+RANDUfreq <- RunFrequencyTest(randu, 100, 31)
+SMfreq    <- RunFrequencyTest(StandardMinimal, 100, 31)
+MTfreq    <- RunFrequencyTest(MersenneTwister, 100, 32)
+VNfreq    <- RunFrequencyTest(VonNeumann, 100, 14)
 
 ```
 
 Règle de décision à $1\%$ : Au vu du principe décrit ci-dessus, plus la Pvaleur est petite plus on peut rejeter de manière sûre le fait que le séquence est aléatoire. En pratique, si la Pvaleur calculée est inférieure à $0.01$ alors la séquence n’est pas aléatoire. Sinon, on ne peut pas conclure pour autant qu’elle l’est, mais rien n’inﬁrme cette hypothèse, au sens de ce test. Il est recommandé que chaque séquence testée fasse au minimum $100$ bits (i.e. $n ≥ 100$) aﬁn que l’application du théorème de la limite centrale ait un sens.
 
-Algorithm        | Avg. P value
----------------- | ----------------
-RANDU            | `r RANDUavgPvalue`
-Standard Minimal | `r SMavgPvalue`
-Mersenne-Twister | `r MTavgPvalue`
-Von Neumann      | `r VNavgPvalue`
+Algorithme               | P-valeur moyenne         | Taux de réussite
+------------------------ | ------------------------ | ------------------------
+RANDU                    | `r RANDUfreq$avgPvalue`  | `r RANDUfreq$passRate`
+Standard Minimal         | `r SMfreq$avgPvalue`     | `r SMfreq$passRate`
+Mersenne-Twister         | `r MTfreq$avgPvalue`     | `r MTfreq$passRate`
+Von Neumann              | `r VNfreq$avgPvalue`     | `r VNfreq$passRate`
 
 
 ## Question 4
@@ -88,17 +88,14 @@ Von Neumann      | `r VNavgPvalue`
 ```{r, echo=FALSE}
 
 RANDUruns <- RunRunsTest(randu, 100, 31)
-
-SMruns <- RunRunsTest(StandardMinimal, 100, 31)
-
-MTruns <- RunRunsTest(MersenneTwister, 100, 32)
-
-VNruns <- RunRunsTest(VonNeumann, 100, 14)
+SMruns    <- RunRunsTest(StandardMinimal, 100, 31)
+MTruns    <- RunRunsTest(MersenneTwister, 100, 32)
+VNruns    <- RunRunsTest(VonNeumann, 100, 14)
 ```
 
 Règle de décision à $1\%$ : Si la Pvaleur calculée est inférieure à $0.01$, alors on peut conclure que la séquence n’est pas aléatoire.
 
-Algorithm                | Avg. P value             | Pass Rate
+Algorithme               | P-valeur moyenne         | Taux de réussite
 ------------------------ | ------------------------ | ------------------------
 RANDU                    | `r RANDUruns$avgPvalue`  | `r RANDUruns$passRate`
 Standard Minimal         | `r SMruns$avgPvalue`     | `r SMruns$passRate`
@@ -110,45 +107,59 @@ Von Neumann              | `r VNruns$avgPvalue`     | `r VNruns$passRate`
 
 ```{r, echo=FALSE}
 
-RANDUavgPvalue <- RunOrderTest(randu, 100)
-
-SMavgPvalue <- RunOrderTest(StandardMinimal, 100)
-
-MTavgPvalue <- RunOrderTest(MersenneTwister, 100)
-
-VNavgPvalue <- RunOrderTest(VonNeumann, 100)
+RANDUord <- RunOrderTest(randu, 100)
+SMord    <- RunOrderTest(StandardMinimal, 100)
+MTord    <- RunOrderTest(MersenneTwister, 100)
+VNord    <- RunOrderTest(VonNeumann, 100)
 ```
 
 Règle de décision à $1\%$ : L’hypothèse que les observations de u sont issues d’une loi uniforme (discrète ou uniforme) est rejetée si la Pvaleur est inférieure à $1\%$. 
  
- Algorithm        | Avg. P value
----------------- | ----------------
-RANDU            | `r RANDUavgPvalue`
-Standard Minimal | `r SMavgPvalue`
-Mersenne-Twister | `r MTavgPvalue`
-Von Neumann      | `r VNavgPvalue`
+Algorithme              | P-valeur moyenne        | Taux de réussite
+----------------------- | ----------------------- | -----------------------
+RANDU                   | `r RANDUord$avgPvalue`  | `r RANDUord$passRate`
+Standard Minimal        | `r SMord$avgPvalue`     | `r SMord$passRate`
+Mersenne-Twister        | `r MTord$avgPvalue`     | `r MTord$passRate`
+Von Neumann             | `r VNord$avgPvalue`     | `r VNord$passRate`
 
+Taux de réussite est le pourcentage de tests où la régle de décision à $1\%$ a été satisfaite.
+
+Selon les tests, l'algorithme de Von Neumann est de la pire qualité parmi les quatre générateurs. Puis, on a RANDU, qui a passé les deux premiers tests seulement environ $34\%$ de fois. Standard Minimal a passé presque tous les tests et Mersenne-Twister a été le meilleur.
 
 # 3 Application aux files d’attentes
 
 ## Question 7
 
 ```{r, echo=TRUE}
-file8  <- FileMM1(8, 15, 12*60)
+file08 <- FileMM1(8, 15, 12*60)
 file14 <- FileMM1(14, 15, 12*60)
 file15 <- FileMM1(15, 15, 12*60)
 file20 <- FileMM1(20, 15, 12*60)
+```
+```{r, echo=FALSE}
 
-evo8  <- evolutionFile(file8$arrivee, file8$depart)
+evo08 <- evolutionFile(file08$arrivee, file08$depart)
 evo14 <- evolutionFile(file14$arrivee, file14$depart)
 evo15 <- evolutionFile(file15$arrivee, file15$depart)
 evo20 <- evolutionFile(file20$arrivee, file20$depart)
 
 par(mfrow=c(2,2))
-plot(evo8$T, evo8$N , type='s')
-plot(evo14$T, evo14$N , type='s')
-plot(evo15$T, evo15$N , type='s')
-plot(evo20$T, evo20$N , type='s')
+plot(evo08$T, evo08$N , type='s', xlab='Temps', ylab='Nombre de personnes dans la file', main= '8 nouveaux clients par heure')
+plot(evo14$T, evo14$N , type='s', xlab='Temps', ylab='Nombre de personnes dans la file', main='14 nouveaux clients par heure')
+plot(evo15$T, evo15$N , type='s', xlab='Temps', ylab='Nombre de personnes dans la file', main='15 nouveaux clients par heure')
+plot(evo20$T, evo20$N , type='s', xlab='Temps', ylab='Nombre de personnes dans la file', main='20 nouveaux clients par heure')
 ```
 
 ## Question 8
+
+```{r, echo=TRUE}
+SM08 <- StatsMoyens(file08$arrivee, file08$depart,  8, 15)
+SM14 <- StatsMoyens(file14$arrivee, file14$depart, 14, 15)
+```
+
+$\mathbb{E}(W)$         | $\mathbb{E}(N)$         | $\lambda\mathbb{E}(W)$
+----------------------- | ----------------------- | -----------------------
+`r SM08$EW`             | `r SM08$EN`             | `r 8*SM08$EW`
+`r SM14$EW`             | `r SM08$EN`             | `r 14*SM14$EW`
+
+La formule de Little est satisfaite $\mathbb{E}(N) = \lambda\mathbb{E}(W)$.
