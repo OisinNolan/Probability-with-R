@@ -131,10 +131,10 @@ Selon les tests, l'algorithme de Von Neumann est de la pire qualité parmi les q
 ## Question 7
 
 ```{r, echo=TRUE}
-file08 <- FileMM1(8, 15, 12*60)
-file14 <- FileMM1(14, 15, 12*60)
-file15 <- FileMM1(15, 15, 12*60)
-file20 <- FileMM1(20, 15, 12*60)
+file08 <- FileMM1(8, 15, 12)
+file14 <- FileMM1(14, 15, 12)
+file15 <- FileMM1(15, 15, 12)
+file20 <- FileMM1(20, 15, 12)
 ```
 ```{r, echo=FALSE}
 
@@ -149,6 +149,9 @@ plot(evo14$T, evo14$N , type='s', xlab='Temps', ylab='Nombre de personnes dans l
 plot(evo15$T, evo15$N , type='s', xlab='Temps', ylab='Nombre de personnes dans la file', main='15 nouveaux clients par heure')
 plot(evo20$T, evo20$N , type='s', xlab='Temps', ylab='Nombre de personnes dans la file', main='20 nouveaux clients par heure')
 ```
+
+Sur la première visualisation 8 personnes viennent par heure en moyen et 15 personnes partent donc tout le monde est servi vite et la file est souvent vide. La situation à droite est similaire avec la file qui est parfois plus longue. Si le taux de personnes venantes et partentes sont les mêmes (15 personnes par heure), la file est rarement vide, mais elle est sous contrôle.
+Quand plus de gens viennent que sortent, la file est remplie et le serveur n'arrive pas à la racourcir.
 
 ## Question 8
 
