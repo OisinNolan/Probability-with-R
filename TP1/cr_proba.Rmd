@@ -1,6 +1,6 @@
 ---
 title: "TP Probabilités"
-author: "Piotr Frątczak"
+author: "Piotr Frątczak, Aydın Akaydın, Oisín Nolan"
 date: "06.05.2020"
 output: html_document
 ---
@@ -155,14 +155,15 @@ Sur la première visualisation 8 personnes viennent par heure en moyen et 15 per
 ## Question 8
 
 ```{r, echo=TRUE}
-SM08 <- StatsMoyens(file08$arrivee, file08$depart, evo08$N,  8, 15, 12)
-SM14 <- StatsMoyens(file14$arrivee, file14$depart, evo14$N, 14, 15, 12)
+SM08 <- StatsMoyens(file08$arrivee, file08$depart,  8, 15)
+SM14 <- StatsMoyens(file14$arrivee, file14$depart, 14, 15)
 ```
 
-$\mathbb{E}(W)$         | $\mathbb{E}(N)$         | $\lambda\mathbb{E}(W)$
------------------------ | ----------------------- | -----------------------
-`r SM08$EW`             | `r SM08$EN`             | `r 8*SM08$EW`
-`r SM14$EW`             | `r SM14$EN`             | `r 14*SM14$EW`
+$\lambda$               | $\mathbb{E}(W)$ estimé  | $\mathbb{E}(N)$         | $\lambda\mathbb{E}(W)$ estimé
+----------------------- | ----------------------- | ----------------------- | -----------------------
+8                       | `r SM08$EW`             | `r SM08$EN`             | `r 8*SM08$EW`
+14                      | `r SM14$EW`             | `r SM14$EN`             | `r 14*SM14$EW`
 
-La formule de Little est satisfaite $\mathbb{E}(N) = \lambda\mathbb{E}(W)$.
-#Ceci signiﬁe qu’en moyenne un client restant un laps de temps E(W) voit arriver derrière lui E(W)λ autres clients, avec λ fréquence d’entrée des clients. 
+Les résulatats estimés de  $\lambda\mathbb{E}(W)$ sont proches des valeurs attendus de la formule de Little $\mathbb{E}(N) = \lambda\mathbb{E}(W)$.
+
+On a simulé des files avec de plus grandes valeurs de $D$ afin d'approcher la vraie valeur de $W$. On a déduit que quand la valeur de $D$ augmente, l'espérence de $W$ multipliée par $\lambda$ approche espérence de $N$.

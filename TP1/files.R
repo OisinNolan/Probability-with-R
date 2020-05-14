@@ -102,40 +102,28 @@ evolutionFile <- function(arrivee, depart)
   )
 }
 
-StatsMoyens <- function(arrivee, depart, N, lambda, mu, D)
+StatsMoyens <- function(arrivee, depart, lambda, mu)
 {
   # E(N)
-  #alpha <- lambda/mu
-  #EN <- alpha/(1-alpha)
+  alpha <- lambda/mu
+  EN <- alpha/(1-alpha)
   
-  #if(alpha >=1) return(NULL)
-  
-  sumN <- 0
-  for(i in 1:length(N))
-  {
-    sumN <- sumN + N[i]
-  }
-  ENa <- sumN / length(N)
+  if(alpha >=1) return(NULL)
   
   # E(W)
+  # estime
   W <- 0
   
   for(i in 1:length(depart))
   {
     W <- W + depart[i] - arrivee[i]
   }
+  EW=W/length(depart)
   
-  if(length(arrivee) > length(depart))
-  {
-    for(i in (length(depart)+1):length(arrivee))
-    {
-      W <- W + D - arrivee[i]
-    }
-  }
   
   return(
     list(
-      EW=W/length(arrivee), EN=ENa
+      EW=EW, EN=EN
     )
   )
 }
