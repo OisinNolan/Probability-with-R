@@ -155,14 +155,14 @@ Sur la première visualisation 8 personnes viennent par heure en moyen et 15 per
 ## Question 8
 
 ```{r, echo=TRUE}
-SM08 <- StatsMoyens(file08$arrivee, file08$depart,  8, 15, 12)
-SM14 <- StatsMoyens(file14$arrivee, file14$depart, 14, 15, 12)
+SM08 <- StatsMoyens(file08$arrivee, file08$depart, evo08$N,  8, 15, 12)
+SM14 <- StatsMoyens(file14$arrivee, file14$depart, evo14$N, 14, 15, 12)
 ```
 
 $\mathbb{E}(W)$         | $\mathbb{E}(N)$         | $\lambda\mathbb{E}(W)$
 ----------------------- | ----------------------- | -----------------------
 `r SM08$EW`             | `r SM08$EN`             | `r 8*SM08$EW`
-`r SM14$EW`             | `r SM08$EN`             | `r 14*SM14$EW`
+`r SM14$EW`             | `r SM14$EN`             | `r 14*SM14$EW`
 
 La formule de Little est satisfaite $\mathbb{E}(N) = \lambda\mathbb{E}(W)$.
 #Ceci signiﬁe qu’en moyenne un client restant un laps de temps E(W) voit arriver derrière lui E(W)λ autres clients, avec λ fréquence d’entrée des clients. 
